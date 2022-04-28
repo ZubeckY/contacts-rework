@@ -10,7 +10,6 @@
             <v-col>{{ contact.phone }}</v-col>
           </v-row>
         </v-col>
-
         <v-col @mouseenter="hoverClass = true" @mouseleave="hoverClass = false" class="col-auto prel">
           <svg style="width:50px;height:50px; position:relative; top: -40px;" viewBox="0 0 24 24">
             <path fill="currentColor" d="M7,22H9V24H7V22M11,22H13V24H11V22M15,22H17V24H15V22Z" />
@@ -33,11 +32,8 @@
               </li>
             </ul>
           </nav>
-
-
         </v-col>
       </v-row>
-
     </v-card>
   </div>
 </template>
@@ -49,6 +45,5 @@ export default class ContactItem extends Vue {
   @Prop ({required:true}) contact!: any
 }
 </script>
-
 <style>
 </style>

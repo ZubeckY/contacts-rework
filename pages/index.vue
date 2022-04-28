@@ -14,26 +14,45 @@
           <v-col>
             <v-row style="margin-left: 10px">
               <v-col>Имя</v-col>
-              <v-col style="margin-left: -80px" >Фамилия</v-col>
-              <v-col style="margin-left: -70px" >Отчество</v-col>
-              <v-col style="margin-left: -100px" >Тел</v-col>
+              <v-col style="margin-left: 50px" >Фамилия</v-col>
+              <v-col style="margin-left: 50px" >Отчество</v-col>
+              <v-col style="margin-left: 50px" >Тел</v-col>
+              <v-col class="col-auto">Количество: {{Contacts.length}}</v-col>
             </v-row>
           </v-col>
         </v-row>
       </header>
-      <div style="margin-top: 15px">
-        Количество: {{Contacts.length}}
-      </div>
       <div class="contact-list d-flex flex-column" v-for="contact in Contacts">
         <contact-item
           :contact="contact"
           @delete="AskDeleteItem (contact)"
           @edit="ShowEditWindow (contact)"
-
         />
       </div>
     </v-container>
-
+    <new-dialog
+      v-show="dialog"
+      @closeDialog='closeDialog'
+    >
+      <div v-if="">
+        <create-item
+          :contact="contact"
+          @closeDialog='closeDialog'
+        />
+      </div>
+      <div v-else-if="">
+        <edit-item
+          :contact="contact"
+          @closeDialog='closeDialog'
+        />
+      </div>
+      <div v-else-if="">
+        <ask-delete-item
+          :contact="contact"
+          @closeDialog='closeDialog'
+        />
+      </div>
+    </new-dialog>
     <div class="alert-wrapper" v-show="AlertOK">
       <v-alert
         v-if="AlertStatus"
@@ -48,65 +67,62 @@
     </div>
   </div>
 </template>
-
-<!-- success #4caf50 -->
-<!-- error #ff5252 -->
-
-
-
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator"
 import ContactItem from "~/components/contactItem.vue";
+import NewDialog from "~/components/newDialog.vue";
+import CreateItem from "~/components/createItem.vue";
+import AskDeleteItem from "~/components/askDeleteItem.vue";
+import EditItem from "~/components/editItem.vue";
 @Component({
-  components: {ContactItem}
+  components: {EditItem, AskDeleteItem, CreateItem, NewDialog, ContactItem}
 })
 export default class Index extends Vue {
   private length:number = 10            //Количество геренации
 
   private Names:any =   [
-    'Имя0',
-    'Имя1',
-    'Имя2',
-    'Имя3',
-    'Имя4',
-    'Имя5',
-    'Имя6',
-    'Имя7',
-    'Имя8',
-    'Имя9'
+    'Имя 0',
+    'Имя 1',
+    'Имя 2',
+    'Имя 3',
+    'Имя 4',
+    'Имя 5',
+    'Имя 6',
+    'Имя 7',
+    'Имя 8',
+    'Имя 9'
   ]
   private SNames:any =  [
-    'Фамилия0',
-    'Фамилия1',
-    'Фамилия2',
-    'Фамилия3',
-    'Фамилия4',
-    'Фамилия5',
-    'Фамилия6',
-    'Фамилия7',
-    'Фамилия8',
-    'Фамилия9',
+    'Фамилия 0',
+    'Фамилия 1',
+    'Фамилия 2',
+    'Фамилия 3',
+    'Фамилия 4',
+    'Фамилия 5',
+    'Фамилия 6',
+    'Фамилия 7',
+    'Фамилия 8',
+    'Фамилия 9',
   ]
   private Patr:any =    [
-    'Отчество0',
-    'Отчество1',
-    'Отчество2',
-    'Отчество3',
-    'Отчество4',
-    'Отчество5',
-    'Отчество6',
-    'Отчество7',
-    'Отчество8',
-    'Отчество9',
+    'Отчество 0',
+    'Отчество 1',
+    'Отчество 2',
+    'Отчество 3',
+    'Отчество 4',
+    'Отчество 5',
+    'Отчество 6',
+    'Отчество 7',
+    'Отчество 8',
+    'Отчество 9',
   ]
 
   private Contacts:any= []
-  private contact:any = []
+  private contact:any = {}
 
   //ALERTS
   private AlertOK:boolean = false
-  private dialog:boolean = true
-
+  private dialog:boolean = false
 
   // Значения
   private AlertValue:string = ''
@@ -148,7 +164,10 @@ export default class Index extends Vue {
   ShowEditWindow (item) {
     this.contact = item;
   }
-
+  closeDialog () {
+    this.dialog = false;
+    this.contact = {}
+  }
 
 }
 </script>
