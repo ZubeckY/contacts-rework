@@ -1,18 +1,34 @@
 <template>
   <div>
     <v-container class="w-100" style="max-width: 1200px;">
-
       <v-row class="action-buttons">
         <v-col class="col-auto">
-          <v-btn elevation="7">Кнопка</v-btn>
+          <v-btn elevation="7" @click="generate">{{ Contacts.length ? 'ЕЩЁ ГЕНЫ' : 'ГЕНА'}}</v-btn>
         </v-col>
         <v-col class="col-auto">
-          <v-btn elevation="7">Кнопка</v-btn>
+          <v-btn elevation="7">Добавить</v-btn>
         </v-col>
       </v-row>
-
-      <div class="contact-list d-flex flex-column" v-for="i in length">
+      <header>
+        <v-row style="padding: 20px 20px 0;">
+          <v-col>
+            <v-row style="margin-left: 10px">
+              <v-col>Имя</v-col>
+              <v-col style="margin-left: -80px" >Фамилия</v-col>
+              <v-col style="margin-left: -70px" >Отчество</v-col>
+              <v-col style="margin-left: -100px" >Тел</v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </header>
+      <div style="margin-top: 15px">
+        Количество: {{Contacts.length}}
+      </div>
+      <div class="contact-list d-flex flex-column" v-for="contact in Contacts">
         <contact-item
+          :contact="contact"
+          @delete="AskDeleteItem (contact)"
+          @edit="ShowEditWindow (contact)"
 
         />
       </div>
@@ -30,8 +46,6 @@
         </span>
       </v-alert>
     </div>
-
-
   </div>
 </template>
 
@@ -87,6 +101,7 @@ export default class Index extends Vue {
   ]
 
   private Contacts:any= []
+  private contact:any = []
 
   //ALERTS
   private AlertOK:boolean = false
@@ -108,9 +123,31 @@ export default class Index extends Vue {
   private SuccessMessage:string = 'Успешно!'
 
   generate () {
+    for (let i = 0; i < this.length; i++) {
+      let getRandom = (min, max) => {return Math.floor(Math.random() * (max-min) + min)}
+      let index = getRandom (0, this.length)
 
+      let nam:any = this.Names[index]
+      let snam:any = this.SNames[index]
+      let partn:any = this.Patr[index]
+
+      let item = {
+        name: nam,
+        sname: snam,
+        patr: partn,
+        phone: Math.round (Math.random() * 100000000000),
+      }
+      this.Contacts.push (item)
+    }
   }
 
+  AskDeleteItem (item) {
+    this.contact = item;
+  }
+
+  ShowEditWindow (item) {
+    this.contact = item;
+  }
 
 
 }
