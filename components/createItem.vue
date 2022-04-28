@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    СОЗДАТЬ
   </div>
 </template>
 <script lang="ts">
@@ -12,6 +12,5 @@ export default class CreateItem extends Vue {
 }
 </script>
 
-<style scoped>
-
+<style>
 </style>

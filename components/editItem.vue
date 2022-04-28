@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    РЕДАКТИРОВАТЬ
   </div>
 </template>
 <script lang="ts">
@@ -12,6 +12,5 @@ export default class EditItem extends Vue {
 }
 </script>
 
-<style scoped>
-
+<style>
 </style>

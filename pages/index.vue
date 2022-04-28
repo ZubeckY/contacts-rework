@@ -6,7 +6,7 @@
           <v-btn elevation="7" @click="generate">{{ Contacts.length ? 'ЕЩЁ ГЕНЫ' : 'ГЕНА'}}</v-btn>
         </v-col>
         <v-col class="col-auto">
-          <v-btn elevation="7">Добавить</v-btn>
+          <v-btn elevation="7" @click="CreateNewElem">Добавить</v-btn>
         </v-col>
       </v-row>
       <header>
@@ -34,19 +34,19 @@
       v-show="dialog"
       @closeDialog='closeDialog'
     >
-      <div v-if="">
+      <div v-if="condition == 'create'">
         <create-item
           :contact="contact"
           @closeDialog='closeDialog'
         />
       </div>
-      <div v-else-if="">
+      <div v-else-if="condition == 'edit'">
         <edit-item
           :contact="contact"
           @closeDialog='closeDialog'
         />
       </div>
-      <div v-else-if="">
+      <div v-else-if="condition == 'ask'">
         <ask-delete-item
           :contact="contact"
           @closeDialog='closeDialog'
@@ -63,6 +63,7 @@
         <span class="message-text">
           {{AlertValue}}
         </span>
+
       </v-alert>
     </div>
   </div>
@@ -78,9 +79,10 @@ import EditItem from "~/components/editItem.vue";
   components: {EditItem, AskDeleteItem, CreateItem, NewDialog, ContactItem}
 })
 export default class Index extends Vue {
-  private length:number = 10            //Количество геренации
+  private length:number = 10            // Количество геренации
+  private condition:string = ''         // Что будет выводить диалог
 
-  private Names:any =   [
+  private Names:any    =   [
     'Имя 0',
     'Имя 1',
     'Имя 2',
@@ -92,7 +94,7 @@ export default class Index extends Vue {
     'Имя 8',
     'Имя 9'
   ]
-  private SNames:any =  [
+  private SNames:any   =   [
     'Фамилия 0',
     'Фамилия 1',
     'Фамилия 2',
@@ -104,7 +106,7 @@ export default class Index extends Vue {
     'Фамилия 8',
     'Фамилия 9',
   ]
-  private Patr:any =    [
+  private Patr:any     =   [
     'Отчество 0',
     'Отчество 1',
     'Отчество 2',
@@ -117,8 +119,8 @@ export default class Index extends Vue {
     'Отчество 9',
   ]
 
-  private Contacts:any= []
-  private contact:any = {}
+  private Contacts:any =   []
+  private contact:any  =   {}
 
   //ALERTS
   private AlertOK:boolean = false
@@ -140,7 +142,7 @@ export default class Index extends Vue {
 
   generate () {
     for (let i = 0; i < this.length; i++) {
-      let getRandom = (min, max) => {return Math.floor(Math.random() * (max-min) + min)}
+      let getRandom = (min:any, max:any) => {return Math.floor(Math.random() * (max-min) + min)}
       let index = getRandom (0, this.length)
 
       let nam:any = this.Names[index]
@@ -157,12 +159,19 @@ export default class Index extends Vue {
     }
   }
 
-  AskDeleteItem (item) {
-    this.contact = item;
+  CreateNewElem () {
+    this.condition = 'create'
+    this.dialog = true
   }
-
-  ShowEditWindow (item) {
+  AskDeleteItem (item:any) {
     this.contact = item;
+    this.condition = 'ask'
+    this.dialog = true
+  }
+  ShowEditWindow (item:any) {
+    this.contact = item;
+    this.condition = 'edit'
+    this.dialog = true;
   }
   closeDialog () {
     this.dialog = false;
@@ -185,7 +194,7 @@ export default class Index extends Vue {
 }
 /* кнопки */
 .na {
-  position: absolute; top: 40px;left: 25px; width: 68px; height: 75px; background: #fff;border: 1px solid #e5e5e5; z-index: 1000000 !important;
+  position: absolute; top: 40px;left: 25px; width: 68px; height: 75px; background: #fff; border: 1px solid #e5e5e5; z-index: 1000000 !important;
 }
 .alert-wrapper {
   position: fixed; width: 300px; bottom: 10px; right: 10px;;

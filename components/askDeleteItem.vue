@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    УДАЛИТЬ
   </div>
 </template>
 <script lang="ts">
@@ -12,6 +12,5 @@ export default class AskDeleteItem extends Vue {
 }
 </script>
 
-<style scoped>
-
+<style>
 </style>
