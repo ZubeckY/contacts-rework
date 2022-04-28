@@ -30,6 +30,7 @@
         />
       </div>
     </v-container>
+
     <new-dialog
       v-show="dialog"
       @closeDialog='closeDialog'
@@ -53,6 +54,7 @@
         />
       </div>
     </new-dialog>
+
     <div class="alert-wrapper" v-show="AlertOK">
       <v-alert
         v-if="AlertStatus"
@@ -176,6 +178,7 @@ export default class Index extends Vue {
   closeDialog () {
     this.dialog = false;
     this.contact = {}
+    this.condition = ''
   }
 
 }
