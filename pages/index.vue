@@ -15,7 +15,6 @@
             <v-row style="margin-left: 10px">
               <v-col>Имя</v-col>
               <v-col style="margin-left: 50px" >Фамилия</v-col>
-              <v-col style="margin-left: 50px" >Отчество</v-col>
               <v-col style="margin-left: 50px" >Тел</v-col>
               <v-col class="col-auto">Количество: {{Contacts.length}}</v-col>
             </v-row>
@@ -25,6 +24,7 @@
       <div class="contact-list d-flex flex-column" v-for="contact in Contacts">
         <contact-item
           :contact="contact"
+          :key="contact.id"
           @delete="AskDeleteItem (contact)"
           @edit="ShowEditWindow (contact)"
         />
@@ -37,28 +37,32 @@
     >
       <div v-if="condition == 'create'">
         <create-item
-          :contact="contact"
+          @createContact ='createContact'
           @closeDialog='closeDialog'
         />
       </div>
       <div v-else-if="condition == 'edit'">
         <edit-item
           :contact="contact"
+          :key="contact.id"
+          @editContact="editContact"
           @closeDialog='closeDialog'
         />
       </div>
       <div v-else-if="condition == 'ask'">
         <ask-delete-item
           :contact="contact"
-          @closeDialog='closeDialog'
+          :key="contact.id"
+          @removeContact = 'removeContact (contact)'
+          @closeDialog = 'closeDialog'
         />
       </div>
     </new-dialog>
 
     <div class="alert-wrapper" v-show="AlertOK">
       <v-alert
-        v-if="AlertStatus"
         outlined
+        v-if="AlertStatus"
         :color="AlertStatusColor"
         :type="AlertStatus"
       >
@@ -108,18 +112,6 @@ export default class Index extends Vue {
     'Фамилия 8',
     'Фамилия 9',
   ]
-  private Patr:any     =   [
-    'Отчество 0',
-    'Отчество 1',
-    'Отчество 2',
-    'Отчество 3',
-    'Отчество 4',
-    'Отчество 5',
-    'Отчество 6',
-    'Отчество 7',
-    'Отчество 8',
-    'Отчество 9',
-  ]
 
   private Contacts:any =   []
   private contact:any  =   {}
@@ -147,20 +139,33 @@ export default class Index extends Vue {
       let getRandom = (min:any, max:any) => {return Math.floor(Math.random() * (max-min) + min)}
       let index = getRandom (0, this.length)
 
-      let nam:any = this.Names[index]
-      let snam:any = this.SNames[index]
-      let partn:any = this.Patr[index]
+      let name:any = this.Names[index]
+      let sname:any = this.SNames[index]
+      let phone:any
 
       let item = {
-        name: nam,
-        sname: snam,
-        patr: partn,
-        phone: Math.round (Math.random() * 100000000000),
+        name: name,
+        sname: sname,
+        phone: (Math.round (Math.random() * 100000000000)),
+        id: name + (Math.round (Math.random() * 100000)) + sname,
       }
       this.Contacts.push (item)
     }
   }
-
+  createContact (contact:any) {
+    this.closeDialog()
+    this.Contacts.push (contact)
+  }
+  editContact (contact:any) {
+    this.contact = contact
+    this.closeDialog()
+    return this.Contacts
+  }
+  removeContact (contact:any) {
+    this.closeDialog()
+    this.Contacts = this.Contacts.filter ((cont:any) => cont.id != contact.id)
+  }
+  // Какую модалку высвечивать
   CreateNewElem () {
     this.condition = 'create'
     this.dialog = true
@@ -175,9 +180,15 @@ export default class Index extends Vue {
     this.condition = 'edit'
     this.dialog = true;
   }
+
   closeDialog () {
     this.dialog = false;
-    this.contact = {}
+    this.contact = {
+      name: 'SS',
+      sname: 'SS',
+      phone: 'SS',
+      id: 'SS',
+    }
     this.condition = ''
   }
 

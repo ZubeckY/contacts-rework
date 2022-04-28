@@ -6,7 +6,6 @@
           <v-row style="margin-left: 10px">
             <v-col>{{ contact.name }}</v-col>
             <v-col>{{ contact.sname }}</v-col>
-            <v-col>{{ contact.patr }}</v-col>
             <v-col>{{ contact.phone }}</v-col>
           </v-row>
         </v-col>
