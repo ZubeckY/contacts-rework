@@ -18,10 +18,11 @@ export default class NewDialog extends Vue {}
   width: 100%; height: 100vh;
   top: 0; left: 0;
   right: 0; bottom: 0;
+  background: #3338;
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  background: #3338;
+  z-index: 100000 !important;
 }
 .dialog-wrapper-container {
   padding: 20px;

@@ -3,10 +3,16 @@
     <v-container class="w-100" style="max-width: 1200px;">
       <v-row class="action-buttons">
         <v-col class="col-auto">
+          <v-btn elevation="7" @click="generate100Items" v-show="MnogaGeni">Очень много гены</v-btn>
+        </v-col>
+        <v-col class="col-auto">
           <v-btn elevation="7" @click="generate">{{ Contacts.length ? 'ЕЩЁ ГЕНЫ' : 'ГЕНА'}}</v-btn>
         </v-col>
         <v-col class="col-auto">
           <v-btn elevation="7" @click="CreateNewElem">Добавить</v-btn>
+        </v-col>
+        <v-col class="col-auto" v-if="Contacts.length">
+          <v-btn elevation="7" @click="Contacts=[];MnogaGeni=true">Отчистить</v-btn>
         </v-col>
       </v-row>
       <header>
@@ -29,8 +35,17 @@
           @edit="ShowEditWindow (contact)"
         />
       </div>
-    </v-container>
 
+      <div class="text-center" v-if="Contacts.length">
+        <!--          v-model="page"-->
+        <v-pagination
+          :length="4"
+          prev-icon="mdi-menu-left"
+          next-icon="mdi-menu-right"
+        ></v-pagination>
+      </div>
+
+    </v-container>
     <new-dialog
       v-show="dialog"
       @closeDialog='closeDialog'
@@ -69,7 +84,6 @@
         <span class="message-text">
           {{AlertValue}}
         </span>
-
       </v-alert>
     </div>
   </div>
@@ -87,6 +101,8 @@ import EditItem from "~/components/editItem.vue";
 export default class Index extends Vue {
   private length:number = 10            // Количество геренации
   private condition:string = ''         // Что будет выводить диалог
+  private dialog:boolean = false        // Показ диалог окна
+  private MnogaGeni:boolean = true      // Показ кнопки большой генерации
 
   private Names:any    =   [
     'Имя 0',
@@ -113,17 +129,15 @@ export default class Index extends Vue {
     'Фамилия 9',
   ]
 
-  private Contacts:any =   []
-  private contact:any  =   {}
-
+  private Contacts:any =   []           // Контакты
+  private contact:any  =   {}           // Контакт
   //ALERTS
-  private AlertOK:boolean = false
-  private dialog:boolean = false
-
+  private AlertOK:boolean = false           // Показать/скрыть окно
+  private successStastus:boolean = false    // Статус операции
   // Значения
-  private AlertValue:string = ''
-  private AlertStatus:string = ''
-  private AlertStatusColor:any = ''
+  private AlertValue:string = ''            // Что высветиться в алерте
+  private AlertStatus:string = ''           // Статус (успех/ошибка)
+  private AlertStatusColor:any = ''         // Цвет (успех/ошибка)
   // Цвета
   private ErrorColor:string = '#ff5252'
   private SuccessColor:string = '#4caf50'
@@ -134,10 +148,16 @@ export default class Index extends Vue {
   private ErrorMessage:string = 'Ошибка'
   private SuccessMessage:string = 'Успешно!'
 
+  // Колдунство над контактами
+  generate100Items () {
+    this.length = 100;
+    this.generate ()
+    this.MnogaGeni = false
+  }
   generate () {
     for (let i = 0; i < this.length; i++) {
       let getRandom = (min:any, max:any) => {return Math.floor(Math.random() * (max-min) + min)}
-      let index = getRandom (0, this.length)
+      let index = getRandom (0, 10)
 
       let name:any = this.Names[index]
       let sname:any = this.SNames[index]
@@ -151,19 +171,44 @@ export default class Index extends Vue {
       }
       this.Contacts.push (item)
     }
+    this.length = 10;
   }
   createContact (contact:any) {
-    this.closeDialog()
-    this.Contacts.push (contact)
+    try {
+      this.successStastus = true;
+      this.Contacts.push (contact)
+      this.AlertFunc ()
+      this.closeDialog()
+    } catch (error) {
+      this.successStastus = false;
+      this.AlertFunc ()
+      this.closeDialog()
+    }
   }
   editContact (contact:any) {
-    this.contact = contact
-    this.closeDialog()
-    return this.Contacts
+    try {
+      let key:any
+      for (key in contact) {this.contact[key] = contact[key]}
+      this.successStastus = true;
+      this.AlertFunc ()
+      this.closeDialog()
+    } catch (error) {
+      this.successStastus = false;
+      this.AlertFunc ()
+      this.closeDialog()
+    }
   }
   removeContact (contact:any) {
-    this.closeDialog()
-    this.Contacts = this.Contacts.filter ((cont:any) => cont.id != contact.id)
+    try {
+      this.successStastus = true;
+      this.Contacts = this.Contacts.filter ((cont:any) => cont.id != contact.id)
+      this.AlertFunc ()
+      this.closeDialog()
+    } catch (error) {
+      this.successStastus = false;
+      this.AlertFunc ()
+      this.closeDialog()
+    }
   }
   // Какую модалку высвечивать
   CreateNewElem () {
@@ -180,21 +225,38 @@ export default class Index extends Vue {
     this.condition = 'edit'
     this.dialog = true;
   }
-
+  // АЛЕРТЫ
+  AlertFunc () {
+    if (this.successStastus == true) {
+      this.AlertOK = true;
+      this.AlertValue = this.SuccessMessage
+      this.AlertStatus = this.SuccessType
+      this.AlertStatusColor = this.SuccessColor
+      this.CloseAlert ()
+    } else {
+      this.AlertOK = false;
+      this.AlertValue = this.ErrorMessage
+      this.AlertStatus = this.ErrorType
+      this.AlertStatusColor = this.ErrorColor
+      this.CloseAlert ()
+    }
+  }
+  CloseAlert () {
+    setTimeout (() => {
+      this.AlertOK = false;
+      this.AlertValue = ''
+      this.AlertStatus = ''
+      this.AlertStatusColor = ''
+    }, 3000)
+  }
+  // Диалоговое
   closeDialog () {
     this.dialog = false;
-    this.contact = {
-      name: 'SS',
-      sname: 'SS',
-      phone: 'SS',
-      id: 'SS',
-    }
+    this.contact = {}
     this.condition = ''
   }
-
 }
 </script>
-
 <style>
 .card-container {
   min-height: 80px;
@@ -202,18 +264,22 @@ export default class Index extends Vue {
 .contact-list-item {
   margin: 40px 0;
 }
-/*position relative*/
+/* position relative */
 .prel {
   position: relative; cursor: pointer;
 }
 /* кнопки */
 .na {
-  position: absolute; top: 40px;left: 25px; width: 68px; height: 75px; background: #fff; border: 1px solid #e5e5e5; z-index: 1000000 !important;
+  position: absolute; top: 40px;left: 25px; width: 68px; height: 75px; background: #fff; border: 1px solid #e5e5e5; z-index: 10000 !important;
 }
+/*  */
 .alert-wrapper {
   position: fixed; width: 300px; bottom: 10px; right: 10px;;
 }
 .message-text {
   font-family: "Roboto", sans-serif; margin-left: 15px;
 }
+/* Стрелки на input:number */
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance: none; margin: 0;}
+input[type=number] {-moz-appearance: textfield;} /* для мозилы */
 </style>

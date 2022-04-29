@@ -36,7 +36,6 @@
 import {Component, Vue} from "vue-property-decorator"
 @Component
 export default class CreateItem extends Vue {
-  private hoverClass:boolean = false;
 
   private contact:any = {
     name: '',
@@ -45,8 +44,15 @@ export default class CreateItem extends Vue {
     id: '',
   }
   Check () {
-    this.contact.id = this.contact.name + (Math.round (Math.random() * 100000)) + this.contact.sname,
-    this.$emit('createContact', this.contact)
+
+    if (
+      this.contact.name != '' &&
+      this.contact.sname != '' &&
+      this.contact.phone != ''
+    ) {
+      this.contact.id = this.contact.name + (Math.round (Math.random() * 100000)) + this.contact.sname,
+      this.$emit('createContact', this.contact)
+    }
   }
 }
 </script>

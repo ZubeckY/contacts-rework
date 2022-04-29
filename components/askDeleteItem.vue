@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card style="width: 320px; height: 200px;">
+    <v-card style="width: 320px; min-height: 200px;">
       <h4 style="text-align: center; padding: 10px;">Вы действительно хотите удалить?</h4>
       <div style="margin: 20px">
         <div style="margin: 10px 0"><strong>id:</strong> {{contact.id}}  </div>
@@ -18,7 +18,6 @@
 import {Component, Prop, Vue} from "vue-property-decorator"
 @Component
 export default class AskDeleteItem extends Vue {
-  private hoverClass:boolean = false;
   @Prop ({required:true}) contact!: any
 }
 </script>
